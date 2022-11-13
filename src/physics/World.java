@@ -101,7 +101,7 @@ public class World {
 				entity.Force.y += entity.Mass * gravity.y;
 				entity.Force.x += entity.Mass * gravity.x;
 				entity.Force.z += entity.Mass * gravity.z;
-				float delta = DisplayManager.getFrameTimeSeconds();
+				double delta = DisplayManager.getFrameTimeSeconds();
 				entity.Velocity.x += entity.Force.x * entity.Mass * DisplayManager.getFrameTimeSeconds();
 				entity.Velocity.y += entity.Force.y * entity.Mass * DisplayManager.getFrameTimeSeconds();
 				entity.Velocity.z += entity.Force.z * entity.Mass * DisplayManager.getFrameTimeSeconds();
@@ -115,7 +115,7 @@ public class World {
 					entity.Velocity.y = 0;
 						
 				}
-				entity.increasePosition(entity.Velocity.x * delta, entity.Velocity.y * delta, entity.Velocity.z * delta);
+				entity.increasePosition(entity.Velocity.x * (float) delta, entity.Velocity.y * (float) delta, entity.Velocity.z * (float) delta);
 			}
 			i++;
 			

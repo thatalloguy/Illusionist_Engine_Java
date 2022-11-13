@@ -2,7 +2,7 @@
 
 package entities;
 
-import org.lwjgl.input.Keyboard;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import models.TexturedModel;
@@ -36,20 +36,20 @@ public class Player extends Entity{
 	}
 	
 	public void move(Terrain terrain) {
-		checkInputs();
+		//checkInputs();
 		System.out.println(isSimulated);
 		
-		super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
-		float distanceX = currentXSpeed * DisplayManager.getFrameTimeSeconds();
-		float distanceZ = currentZSpeed * DisplayManager.getFrameTimeSeconds();
-		float dx = (float) (distanceX * Math.sin(Math.toRadians(this.camera.getYaw())));
-		float dz = (float) (distanceZ * Math.cos(Math.toRadians(-this.camera.getYaw())));
-		super.increasePosition(dx, 0, dz);
+		//super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
+		//float distanceX = currentXSpeed * DisplayManager.getFrameTimeSeconds();
+		//float distanceZ = currentZSpeed * DisplayManager.getFrameTimeSeconds();
+		//float dx = (float) (distanceX * Math.sin(Math.toRadians(this.camera.getYaw())));
+		//float dz = (float) (distanceZ * Math.cos(Math.toRadians(-this.camera.getYaw())));
+		//super.increasePosition(dx, 0, dz);
 		
 		
 		// Jumpp
 		upwardsSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
-		super.increasePosition(0, upwardsSpeed  * DisplayManager.getFrameTimeSeconds(), 0);
+		//super.increasePosition(0, upwardsSpeed  * DisplayManager.getFrameTimeSeconds(), 0);
 		float terrainHeight = terrain.getHeightOfTerrain(super.getPosition().x, super.getPosition().z);
 		if (super.getPosition().y < terrainHeight) {
 			upwardsSpeed= 0;
@@ -70,7 +70,7 @@ public class Player extends Entity{
 		}
 		
 	}
- 
+	/*
 	private void checkInputs() {
 		if(Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			this.currentZSpeed = -RUN_SPEED;
@@ -112,7 +112,7 @@ public class Player extends Entity{
 		}
 		
 	}
-
+	*/
 	public static float getRUN_SPEED() {
 		return RUN_SPEED;
 	}

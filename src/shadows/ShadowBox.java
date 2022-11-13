@@ -1,6 +1,6 @@
 package shadows;
 
-import org.lwjgl.opengl.Display;
+
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 import org.lwjgl.util.vector.Vector4f;
@@ -237,7 +237,7 @@ public class ShadowBox {
 	 * @return The aspect ratio of the display (width:height ratio).
 	 */
 	private float getAspectRatio() {
-		return (float) Display.getWidth() / (float) Display.getHeight();
+		return (float) DisplayManager.getWidth() / (float) DisplayManager.getHeight();
 	}
 
 }

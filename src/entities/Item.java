@@ -1,6 +1,6 @@
 package entities;
 
-import org.lwjgl.input.Keyboard;
+
 import org.lwjgl.util.vector.Vector3f;
 
 import models.TexturedModel;
@@ -16,12 +16,6 @@ public class Item extends Entity{
 		this.tag = tag;
 	}
 	
-	@Override
-	public void Update() {
-		if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
-			super.Velocity.y += 20;
-		}
-		
-	}
+
 
 }

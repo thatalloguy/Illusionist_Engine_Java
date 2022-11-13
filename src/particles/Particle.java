@@ -71,7 +71,7 @@ public class Particle {
 	protected boolean update() {
 		velocity.y += Player.GRAVITY * gravityEffect * DisplayManager.getFrameTimeSeconds();
 		Vector3f change = new Vector3f(velocity);
-		change.scale(DisplayManager.getFrameTimeSeconds());
+		change.scale((float) DisplayManager.getFrameTimeSeconds());
 		Vector3f.add(change, position, position);
 		updateTextureCoordInfo();
 		elapsedTime += DisplayManager.getFrameTimeSeconds();

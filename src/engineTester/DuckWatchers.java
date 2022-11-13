@@ -1,3 +1,4 @@
+
 package engineTester;
 
 import java.io.File;
@@ -5,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.lwjgl.input.Keyboard;
+
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -188,7 +189,7 @@ public class DuckWatchers {
 
 				
 		
-		while(!Display.isCloseRequested()){
+		while(!DisplayManager.shouldClose()){
 /////////////camera.Move();
 /////////////player.move(terrain);
 			

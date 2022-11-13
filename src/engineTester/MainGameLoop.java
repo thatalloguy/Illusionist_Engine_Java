@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.Display;
+
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -28,7 +27,6 @@ import particles.ParticleMaster;
 import particles.ParticleSystem;
 import particles.ParticleTexture;
 import physics.BoxCollider;
-import physics.Builder;
 import physics.World;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
@@ -48,7 +46,7 @@ public class MainGameLoop {
 		return new Vector3f(var, var, var);
 	}
 	
-	public static void amain(String[] args) {
+	public static void main(String[] args) {
 
 		DisplayManager.createDisplay();
 		Loader loader = new Loader();
@@ -59,7 +57,7 @@ public class MainGameLoop {
 		
 		Player player = new Player(stanfordBunny, new Vector3f(100,0,-50),0,180,0, toVector3f(0.6f), 0);
 		
-		Camera camera = new Camera(player);	
+		Camera camera = new Camera();	
 		
 		MasterRenderer renderer = new MasterRenderer(loader,camera);
 		ParticleMaster.init(loader, renderer.getProjectionMatrix());
@@ -219,14 +217,14 @@ public class MainGameLoop {
 		world.addBoxCollider(wheelbox);
 		//world.addBoxCollider(playerHitBox);
 		
-		while(!Display.isCloseRequested()){
+		while(!DisplayManager.shouldClose()){
 			camera.Move();
 			//playerEntity.setPosition(player.getPosition());
 			world.Step();
 			//player.setPosition(playerEntity.getPosition());
 			player.move(terrain);
 			//builder.Update();
-			picker.update();
+			//picker.update();
 			//wheel.setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, player.getPosition().z + 10));
 
 			//system.generateParticles(player.getPosition());
@@ -234,12 +232,7 @@ public class MainGameLoop {
 			ParticleMaster.update();
 			renderer.renderShadowMap(entities, sun);
 			
-			if (Keyboard.isKeyDown(Keyboard.KEY_E)) {
-				cube.setPosition(player.getPosition());
-			}
-			if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {
-				cube2.setPosition(player.getPosition());
-			}
+
 
 			
 			if (renderer.skyboxRenderer.getIsDay()) {
@@ -268,7 +261,7 @@ public class MainGameLoop {
 			
 			guiRenderer.render(guis);
 			TextMaster.render();
-			
+			//DisplayManager.Title = "Illusion Editor | FPS: " + DisplayManager.getFrameTimeSeconds();
 			DisplayManager.updateDisplay();
 		}
 
@@ -277,6 +270,7 @@ public class MainGameLoop {
 		guiRenderer.cleanUp();
 		renderer.cleanUp();
 		loader.cleanUp();
+		
 		DisplayManager.closeDisplay();
 
 	}
