@@ -28,6 +28,8 @@ public class StaticShader extends ShaderProgram{
 	private int location_useFakelighting;
 	private int location_numbersOfRows;
 	private int location_offset;
+	private int location_ID;
+	private int location_usePicking;
 	private int location_max_lights = MAX_LIGHTS;
 	
 	public StaticShader() {
@@ -50,7 +52,8 @@ public class StaticShader extends ShaderProgram{
 		location_shineDamper = super.getUniformLocation("shineDamper");
 		location_reflectivity = super.getUniformLocation("reflectivity");
 		location_useFakelighting = super.getUniformLocation("useFakeLighting");
-		
+		location_ID = super.getUniformLocation("ID");
+		location_usePicking = super.getUniformLocation("usePicking");
 //		location_numbersOfRows = super.getUniformLocation("numbersOfRows");
 //		location_offset = super.getUniformLocation("offset");
 		
@@ -108,6 +111,11 @@ public class StaticShader extends ShaderProgram{
 	
 	public void loadProjectionMatrix(Matrix4f projection) {
 		super.loadMatrix(location_projectionMatrix, projection);
+	}
+	
+	public void loadPicking(float ID, Boolean usePicking) {
+		super.loadFloat(location_ID, ID);
+		super.loadBoolean(location_usePicking, usePicking);
 	}
 	
 	

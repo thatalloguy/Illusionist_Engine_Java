@@ -2,6 +2,7 @@ package renderEngine;
 
 
 import org.lwjgl.opengl.*;
+import org.lwjglx.input.Mouse;
 
 import imgui.ImGui;
 import imgui.flag.ImGuiConfigFlags;
@@ -24,7 +25,7 @@ public class DisplayManager {
 	
 	private static long window;
 	
-	
+	public static Mouse mouse;
     
     public static ImGuiImplGlfw imGuiGlfw;// = new ImGuiImplGlfw(); 
     public static ImGuiImplGl3 imGuiGl13;// = new ImGuiImplGl3();
@@ -40,6 +41,8 @@ public class DisplayManager {
 		    throw new IllegalStateException("Unable to initialize GLFW");
 		}
 		long window = GLFW.glfwCreateWindow(WIDTH, HEIGHT, Title, 0, 0);
+		GLFW.glfwInit();
+		DisplayManager.mouse = new Mouse();
 		DisplayManager.window = window;
 		if(window == 0) {
 		    throw new RuntimeException("Failed to create window");

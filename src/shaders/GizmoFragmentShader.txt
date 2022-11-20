@@ -1,0 +1,19 @@
+#version 150
+
+
+in vec2 pass_texCoords;
+in vec3 surfaceNormal;
+in vec3 toLightVector[6];
+in vec3 toCameraVector;
+in vec4 shadowCoords;
+
+out vec4 out_Color;
+uniform float color_r;
+uniform float color_g;
+uniform float color_b;
+
+
+void main(void){
+	out_Color = vec4(color_r, color_g, color_b, 1.0);
+
+}

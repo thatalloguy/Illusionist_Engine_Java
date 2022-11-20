@@ -91,6 +91,10 @@ public class EntityRenderer {
 		
 		shader.loadTransformationMatrix(transformationMatrix);
 		shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());
+		
+		float yes = entity.getID();
+		shader.loadPicking(yes / 10, entity.isPicking);
+		
 	}
 	
 	

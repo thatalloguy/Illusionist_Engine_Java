@@ -8,6 +8,9 @@ public class Light {
 	private Vector3f colour;
 	private Vector3f attenuation = new Vector3f(1, 0, 0);
 	
+	public String name = "Light";
+	private int ID = 0;
+	
 	public Light(Vector3f position, Vector3f colour) {
 		this.position = position;
 		this.colour = colour;
@@ -41,6 +44,14 @@ public class Light {
 
 	public void setAttenuation(Vector3f attenuation) {
 		this.attenuation = attenuation;
+	}
+
+	public int getID() {
+		return ID;
+	}
+
+	public void setID(int iD) {
+		ID = iD;
 	}
 	
 	

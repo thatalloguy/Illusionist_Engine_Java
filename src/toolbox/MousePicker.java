@@ -1,7 +1,6 @@
 package toolbox;
 
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.Display;
+
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -9,6 +8,10 @@ import org.lwjgl.util.vector.Vector4f;
 
 import terrain.Terrain;
 import entities.Camera;
+import entities.ECS;
+import entities.Entity;
+import input.Mouse;
+import renderEngine.DisplayManager;
 
 public class MousePicker {
 
@@ -21,11 +24,13 @@ public class MousePicker {
 	private Matrix4f viewMatrix;
 	private Camera camera;
 	
-	private Terrain terrain;
+	private ECS terrain;
+	private Mouse mouse;
 	private Vector3f currentTerrainPoint;
 
-	public MousePicker(Camera cam, Matrix4f projection, Terrain terrain) {
+	public MousePicker(Camera cam, Matrix4f projection, ECS terrain, Mouse mouse) {
 		camera = cam;
+		this.mouse = mouse;
 		projectionMatrix = projection;
 		viewMatrix = Maths.createViewMatrix(camera);
 		this.terrain = terrain;
@@ -38,7 +43,7 @@ public class MousePicker {
 	public Vector3f getCurrentRay() {
 		return currentRay;
 	}
-
+	
 	public void update() {
 		viewMatrix = Maths.createViewMatrix(camera);
 		currentRay = calculateMouseRay();
@@ -48,10 +53,10 @@ public class MousePicker {
 			currentTerrainPoint = null;
 		}
 	}
-
+	
 	private Vector3f calculateMouseRay() {
-		float mouseX = Mouse.getX();
-		float mouseY = Mouse.getY();
+		float mouseX = mouse.getMousePosition().getX();
+		float mouseY = mouse.getMousePosition().getY();
 		Vector2f normalizedCoords = getNormalisedDeviceCoordinates(mouseX, mouseY);
 		Vector4f clipCoords = new Vector4f(normalizedCoords.x, normalizedCoords.y, -1.0f, 1.0f);
 		Vector4f eyeCoords = toEyeCoords(clipCoords);
@@ -74,8 +79,8 @@ public class MousePicker {
 	}
 
 	private Vector2f getNormalisedDeviceCoordinates(float mouseX, float mouseY) {
-		float x = (2.0f * mouseX) / Display.getWidth() - 1f;
-		float y = (2.0f * mouseY) / Display.getHeight() - 1f;
+		float x = (2.0f * mouseX) / Utils.getPrecentageOf(55,DisplayManager.getWidth()) - 1f;
+		float y = (2.0f * mouseY) /  Utils.getPrecentageOf(60,DisplayManager.getHeight()) - 1f;
 		return new Vector2f(x, y);
 	}
 	
@@ -92,10 +97,13 @@ public class MousePicker {
 		float half = start + ((finish - start) / 2f);
 		if (count >= RECURSION_COUNT) {
 			Vector3f endPoint = getPointOnRay(ray, half);
-			Terrain terrain = getTerrain(endPoint.getX(), endPoint.getZ());
+			
+			ECS terrain = getTerrain(endPoint.getX(), endPoint.getZ());
+			System.out.println(endPoint);
 			if (terrain != null) {
 				return endPoint;
 			} else {
+				
 				return null;
 			}
 		}
@@ -117,19 +125,30 @@ public class MousePicker {
 	}
 
 	private boolean isUnderGround(Vector3f testPoint) {
-		Terrain terrain = getTerrain(testPoint.getX(), testPoint.getZ());
+	
+		/////////////////
+		ECS terrain = getTerrain(testPoint.getX(), testPoint.getZ());
 		float height = 0;
 		if (terrain != null) {
-			height = terrain.getHeightOfTerrain(testPoint.getX(), testPoint.getZ());
+			Entity entity = terrain.getEntity(new Vector3f(testPoint.getX(), testPoint.getY(), testPoint.getZ()));
+			//System.out.println(testPoint);
+			if (entity != null) {
+				return true;
+			}
 		}
+		
+		/*
 		if (testPoint.y < height) {
 			return true;
 		} else {
 			return false;
 		}
+		*/
+		return false;
 	}
+	
 
-	private Terrain getTerrain(float worldX, float worldZ) {
+	private ECS getTerrain(float worldX, float worldZ) {
 		return terrain;
 	}
 

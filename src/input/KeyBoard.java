@@ -245,6 +245,11 @@ public class KeyBoard {
 				return true;
 			}
 		} 
+		if (key == "tab") {
+			if (GLFW.glfwGetKey(DisplayManager.getRawWindow(), GLFW.GLFW_KEY_TAB) == GLFW.GLFW_PRESS) {
+				return true;
+			}
+		} 
 		
 		return false;
 	}

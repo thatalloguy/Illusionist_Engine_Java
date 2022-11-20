@@ -64,6 +64,8 @@ public class SkyboxRenderer {
 	
 	private Boolean isDay = true;
 	
+	public Boolean doCycle = false;
+	public Boolean doSpining = false;
 	private RawModel cube;
 	private int texture;
 	private int nightTexture;
@@ -82,6 +84,7 @@ public class SkyboxRenderer {
 	}
 	
 	public void render(Camera camera) {
+		shader.doSpin = this.doSpining;
 		shader.start();
 		shader.loadViewMatrix(camera);
 		GL30.glBindVertexArray(cube.getVaoID());
@@ -94,38 +97,52 @@ public class SkyboxRenderer {
 	}
 	
 	private void bindTextures(){
-		time += DisplayManager.getFrameTimeSeconds() * 1000;
-		time %= 24000;
-		int texture1;
-		int texture2;
-		float blendFactor;		
-		if(time >= 0 && time < 5000){
-			texture1 = nightTexture;
-			texture2 = nightTexture;
-			isDay = false;
-			blendFactor = (time - 0)/(5000 - 0);
-		}else if(time >= 5000 && time < 8000){
-			texture1 = nightTexture;
-			texture2 = texture;
-			isDay = true;
-			blendFactor = (time - 5000)/(8000 - 5000);
-		}else if(time >= 8000 && time < 21000){
-			texture1 = texture;
-			texture2 = texture;
-			isDay = true;
-			blendFactor = (time - 8000)/(21000 - 8000);
-		}else{
-			isDay = false;
-			texture1 = texture;
-			texture2 = nightTexture;
-			blendFactor = (time - 21000)/(24000 - 21000);
+		if (doCycle) {
+			time += DisplayManager.getFrameTimeSeconds() * 1000;
+			time %= 24000;
+			int texture1;
+			int texture2;
+			float blendFactor;		
+			if(time >= 0 && time < 5000){
+				texture1 = nightTexture;
+				texture2 = nightTexture;
+				isDay = false;
+				blendFactor = (time - 0)/(5000 - 0);
+			}else if(time >= 5000 && time < 8000){
+				texture1 = nightTexture;
+				texture2 = texture;
+				isDay = true;
+				blendFactor = (time - 5000)/(8000 - 5000);
+			}else if(time >= 8000 && time < 21000){
+				texture1 = texture;
+				texture2 = texture;
+				isDay = true;
+				blendFactor = (time - 8000)/(21000 - 8000);
+			}else{
+				isDay = false;
+				texture1 = texture;
+				texture2 = nightTexture;
+				blendFactor = (time - 21000)/(24000 - 21000);
+			}
+			
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture1);
+			GL13.glActiveTexture(GL13.GL_TEXTURE1);
+			GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture2);
+			shader.loadBlendFactor(blendFactor);
+		} else {
+			int texture1 = texture;
+			int texture2 = texture;
+			
+			int blendFactor = 0;
+			
+			GL13.glActiveTexture(GL13.GL_TEXTURE0);
+			GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture1);
+			GL13.glActiveTexture(GL13.GL_TEXTURE1);
+			GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture2);
+			shader.loadBlendFactor(blendFactor);
 		}
-
-		GL13.glActiveTexture(GL13.GL_TEXTURE0);
-		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture1);
-		GL13.glActiveTexture(GL13.GL_TEXTURE1);
-		GL11.glBindTexture(GL13.GL_TEXTURE_CUBE_MAP, texture2);
-		shader.loadBlendFactor(blendFactor);
+		
 	}
 	
 	public boolean getIsDay() {

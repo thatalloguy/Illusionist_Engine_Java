@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Matrix4f;
 
+import Gizmo.Gizmo;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -27,15 +28,18 @@ public class MasterRenderer {
 	
 	private EntityRenderer renderer;
 	
+
 	private TerrainRenderer terrainRenderer;
 	private TerrainShader terrainShader = new TerrainShader();
 	
+	public boolean renderSkyBox = true;
 	public static final float FOV = 70;
 	public static final float NEAR_PLANE = 0.1f;
 	public static final float FAR_PLANE = 1000;
 	
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel,List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
+	private List<Gizmo> gizmos = new ArrayList<Gizmo>();
 	
 	public SkyboxRenderer skyboxRenderer;
 	private ShadowMapMasterRenderer shadowMapRenderer;
@@ -69,6 +73,7 @@ public class MasterRenderer {
 		shader.loadLights(lights);
 		shader.loadViewMatrix(camera);
 		
+		
 		renderer.render(entities);
 		
 		shader.stop();
@@ -77,9 +82,14 @@ public class MasterRenderer {
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		terrainShader.stop();
-		skyboxRenderer.render(camera);
+		
+
+		if (this.renderSkyBox) {
+			skyboxRenderer.render(camera);
+		}
 		terrains.clear();
 		entities.clear();
+		
 	}
 	
 	public void processTerrain(Terrain terrain) {
@@ -98,6 +108,10 @@ public class MasterRenderer {
 			entities.put(entityModel, newBatch);
 		}
 		
+	}
+	
+	public void addGizmo(Gizmo gizmo) {
+		gizmos.add(gizmo);
 	}
 	
 	public void renderShadowMap(List<Entity> entitylist, Light sun) {

@@ -17,14 +17,15 @@ import org.lwjgl.opengl.GL40;
 import org.lwjgl.opengl.GL42;
 
 import renderEngine.DisplayManager;
+import toolbox.Utils;
 
 public class FrameBuffer {
 
-	protected static final int REFLECTION_WIDTH = 320;
-	private static final int REFLECTION_HEIGHT = 180;
+	protected static final int REFLECTION_WIDTH = DisplayManager.getWidth();
+	private static final int REFLECTION_HEIGHT = DisplayManager.getHeight();
 	
-	protected static final int REFRACTION_WIDTH = 1280;
-	private static final int REFRACTION_HEIGHT = 720;
+	protected static final int REFRACTION_WIDTH = DisplayManager.getWidth();
+	private static final int REFRACTION_HEIGHT = DisplayManager.getHeight();
 
 	private int reflectionFrameBuffer;
 	private int reflectionTexture;
@@ -135,6 +136,16 @@ public class FrameBuffer {
 		GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT,
 				GL30.GL_RENDERBUFFER, depthBuffer);
 		return depthBuffer;
+	}
+	
+	public float readPixel(int x, int y) {
+		GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, reflectionFrameBuffer);
+		GL30.glReadBuffer(GL30.GL_COLOR_ATTACHMENT0);
+		
+		float pixels[] = new float[3];
+		GL30.glReadPixels(x, y, 1, 1, GL30.GL_RGB, GL30.GL_FLOAT, pixels);
+		
+		return (float) Utils.round(pixels[0], 2);
 	}
 
 }

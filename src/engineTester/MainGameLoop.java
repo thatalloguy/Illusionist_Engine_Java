@@ -19,6 +19,8 @@ import fontMeshCreator.FontType;
 import fontRendering.TextMaster;
 import guis.GuiRenderer;
 import guis.GuiTexture;
+import input.KeyBoard;
+import input.Mouse;
 import models.RawModel;
 import models.TexturedModel;
 import objConverter.ModelData;
@@ -57,7 +59,7 @@ public class MainGameLoop {
 		
 		Player player = new Player(stanfordBunny, new Vector3f(100,0,-50),0,180,0, toVector3f(0.6f), 0);
 		
-		Camera camera = new Camera();	
+		Camera camera = new Camera(new Mouse(), new KeyBoard());	
 		
 		MasterRenderer renderer = new MasterRenderer(loader,camera);
 		ParticleMaster.init(loader, renderer.getProjectionMatrix());
@@ -172,7 +174,7 @@ public class MainGameLoop {
 		
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 		
-		MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain);
+		//MousePicker picker = new MousePicker(camera, renderer.getProjectionMatrix(), terrain);
 		
 		ParticleTexture particleTexture = new ParticleTexture(loader.loadTexture("particleAtlas"),4);
 		
@@ -218,7 +220,7 @@ public class MainGameLoop {
 		//world.addBoxCollider(playerHitBox);
 		
 		while(!DisplayManager.shouldClose()){
-			camera.Move();
+			camera.move();
 			//playerEntity.setPosition(player.getPosition());
 			world.Step();
 			//player.setPosition(playerEntity.getPosition());

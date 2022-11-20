@@ -18,6 +18,10 @@ public class Entity {
 	public boolean isRendered = true;
 	public boolean isSimulated = true;
 	private boolean isDebug = false;
+	public boolean isPicking = false;
+	
+	private int ID = 0;
+	public String name = "Entity";
 	
 	private int textureIndex = 0;
 	
@@ -105,7 +109,8 @@ public class Entity {
 	}
 
 	public float getRotX() {
-		return rotX;
+		float rotx = 0; rotx += rotX;
+		return rotx;
 	}
 
 	public void setRotX(float rotX) {
@@ -167,6 +172,15 @@ public class Entity {
 	public Entity getEntity() {
 		return this;
 	}
+
+	public int getID() {
+		return ID;
+	}
+
+	public void setID(int iD) {
+		ID = iD;
+	}
+	
 	
 	
 }
