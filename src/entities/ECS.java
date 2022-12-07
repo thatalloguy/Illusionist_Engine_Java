@@ -1,18 +1,16 @@
 package entities;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import imgui.ImFont;
+import Editor.Console;
 import imgui.ImGui;
-import imgui.ImGuiIO;
 import imgui.ImGuiStyle;
 import imgui.type.ImFloat;
-import imgui.type.ImInt;
 import imgui.type.ImString;
-import imgui.ImVec4;
 import imgui.flag.ImGuiCol;
 public class ECS {
 
@@ -20,34 +18,67 @@ public class ECS {
 	private List<Light> lights = new ArrayList<Light>();
 	private List<Camera> cameras = new ArrayList<Camera>();
 
-	private int id_counter = 0;
-	
+	public int id_counter = 0;
+	public int id_light_counter = 0;
+	private int id_camera_counter =0;
 	private Entity selected_entity;
 	private Light selected_light;
-	private Camera selected_camera;
+	public Camera selected_camera;
+	
+	private Entity ClipboardEntity;
 	
 	private ImGuiStyle style = ImGui.getStyle();
+	public Entity current_gizmo;
+	public Boolean isPasted = false;
 	
-	public ECS() {	
-
+	public Entity cameraEntity;
+	
+	private float[] h = {
+			255, 255, 255,
+	};
+	
+	private Console console;
+	public ECS(Console console) {	
+		this.console = console;
 	}
 
 	
 	
+	
+	public void Copy() {
+		this.ClipboardEntity = selected_entity;
+	}
+	
+	public void Paste() {
+		if (!isPasted && ClipboardEntity != null) {
+			Entity newEntity = new Entity(ClipboardEntity.getModel(), ClipboardEntity.getPosition(), ClipboardEntity.getRotX(), ClipboardEntity.getRotY(), ClipboardEntity.getRotZ(), ClipboardEntity.getScale(), 0);
+			newEntity.ModelPath = ClipboardEntity.ModelPath;
+			newEntity.TexturePath = ClipboardEntity.TexturePath;
+			newEntity.setID(id_counter);
+			newEntity.isRendered = ClipboardEntity.isRendered;
+			newEntity.uselighting = ClipboardEntity.uselighting;
+			newEntity.myLight = ClipboardEntity.myLight;
+			if (newEntity.myLight != null) {
+				addLight(newEntity.myLight);
+			}
+			id_counter++;
+			this.entities.add(newEntity);
+			isPasted = true;
+		}
+	}
+	
+	
 	public void RenderInfo() {
-		if (this.selected_entity != null & this.selected_light == null) {
-			
-			//Display info here
-			
-			//name
-			if (ImGui.treeNodeEx("Entity Component", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
+		
+		if (this.selected_entity != null & this.selected_light == null && selected_entity.type.startsWith("C")) {
+			if (ImGui.treeNodeEx("Camera Component", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
 				ImGui.text(" ");
 				ImGui.separator();
 				ImGui.text(" ");
 				
 				ImGui.text("Name: ");
 				ImGui.sameLine();
-				ImString buf = new ImString(this.selected_entity.name);
+				ImString buf = new ImString(this.selected_light.name);
 				ImGui.inputText(" ", buf);
 				ImGui.text(" ");
 				ImGui.separator();
@@ -76,6 +107,56 @@ public class ECS {
 						ImGui.inputFloat(" ", new ImFloat(this.selected_entity.getPosition().z));
 						ImGui.treePop();
 						this.resetTextColor();
+					}
+					
+					ImGui.text(" ");
+					
+				}
+			}
+		}
+		
+		if (this.selected_entity != null & this.selected_light == null && selected_entity.type.startsWith("E")) {
+			//Display info here
+			
+			//name
+			if (ImGui.treeNodeEx("Entity Component", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
+				ImGui.text(" ");
+				ImGui.separator();
+				ImGui.text(" ");
+				
+				ImGui.text("Name: ");
+				ImGui.sameLine();
+				ImString buf = new ImString(this.selected_entity.name);
+				ImGui.inputText(" ", buf);
+				ImGui.text(" ");
+				ImGui.separator();
+				ImGui.text(" ");
+				if (ImGui.treeNodeEx("Transformation", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
+					//Position
+					ImGui.text(" ");
+					if (ImGui.treeNodeEx("Position", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
+						this.setTextColor(1, 0, 0, 1);
+						ImGui.text("X: ");
+						this.resetTextColor();
+						ImGui.sameLine();
+						
+						ImGui.pushItemWidth(55);
+						ImGui.inputFloat(" ", new ImFloat(this.selected_entity.getPosition().x));
+						ImGui.sameLine();this.setTextColor(0, 1, 0, 1);
+						ImGui.text("Y: ");
+						this.resetTextColor();
+						ImGui.sameLine();
+						ImGui.pushItemWidth(55);
+						ImGui.inputFloat(" ", new ImFloat(this.selected_entity.getPosition().y));
+						ImGui.sameLine();this.setTextColor(0, 0, 10.3f, 3.0f);
+						ImGui.text("Z: ");
+						this.resetTextColor();
+						ImGui.sameLine();
+						ImGui.pushItemWidth(55);
+						ImGui.inputFloat(" ", new ImFloat(this.selected_entity.getPosition().z));
+						ImGui.treePop();
+						this.resetTextColor();
+						ImGui.treePop();
 					}
 					ImGui.text(" ");
 					// Scale
@@ -146,103 +227,120 @@ public class ECS {
 				ImGui.separator();
 				ImGui.text(" ");
 
+
+				if (ImGui.button("Delete")) {
+					try {
+						this.selected_entity.isRendered = false;
+						this.selected_entity = null;
+					} catch (Exception E){
+						
+							console.addError("Couldn't remove ENTITY: " + this.selected_entity.getID());
+							console.addMessage("Entity ID: " + (this.selected_entity.getID()));
 					
+					}
 				
-				
-				ImGui.treePop();
 
 				
 			}	
 			
 		}
-		
-		if (this.selected_light != null && this.selected_entity == null) {
-			if (ImGui.treeNodeEx("Light Component", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
-				ImGui.text(" ");
-				ImGui.separator();
-				ImGui.text(" ");
-				
-				ImGui.text("Name: ");
-				ImGui.sameLine();
-				ImString buf = new ImString(this.selected_light.name);
-				ImGui.inputText(" ", buf);
-				ImGui.text(" ");
-				ImGui.separator();
-				ImGui.text(" ");
-				if (ImGui.treeNodeEx("Transformation", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
-					//Position
+		if (this.selected_entity != null) {
+			if (this.selected_entity.myLight != null) {
+				if (ImGui.treeNodeEx("Light Component", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
 					ImGui.text(" ");
-					if (ImGui.treeNodeEx("Position", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
-						this.setTextColor(1, 0, 0, 1);
-						ImGui.text("X: ");
-						this.resetTextColor();
-						ImGui.sameLine();
-						ImGui.pushItemWidth(55);
-						ImGui.inputFloat(" ", new ImFloat(this.selected_light.getPosition().x));
-						ImGui.sameLine();this.setTextColor(0, 1, 0, 1);
-						ImGui.text("Y: ");
-						this.resetTextColor();
-						ImGui.sameLine();
-						ImGui.pushItemWidth(55);
-						ImGui.inputFloat(" ", new ImFloat(this.selected_light.getPosition().y));
-						ImGui.sameLine();this.setTextColor(0, 0, 10.3f, 3.0f);
-						ImGui.text("Z: ");
-						this.resetTextColor();
-						ImGui.sameLine();
-						ImGui.pushItemWidth(55);
-						ImGui.inputFloat(" ", new ImFloat(this.selected_light.getPosition().z));
-						ImGui.treePop();
-						this.resetTextColor();
-					}
+					ImGui.separator();
 					ImGui.text(" ");
-					// Scale
-					if (ImGui.treeNodeEx("Color", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
-						this.setTextColor(1, 0, 0, 1);
-						ImGui.text("r: ");
-						this.resetTextColor();
-						ImGui.sameLine();
+					
+					ImGui.text("Name: ");
+					ImGui.sameLine();
+					ImString buf = new ImString(this.selected_entity.myLight.name);
+					ImGui.inputText(" ", buf);
+					ImGui.text(" ");
+					ImGui.separator();
+					ImGui.text(" ");
+					if (ImGui.treeNodeEx("Transformation", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
+						//Position
+						ImGui.text(" ");
+						if (ImGui.treeNodeEx("Position", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
+							this.setTextColor(1, 0, 0, 1);
+							ImGui.text("X: ");
+							this.resetTextColor();
+							ImGui.sameLine();
+							ImGui.pushItemWidth(55);
+							ImGui.inputFloat(" ", new ImFloat(this.selected_entity.myLight.getPosition().x));
+							ImGui.sameLine();this.setTextColor(0, 1, 0, 1);
+							ImGui.text("Y: ");
+							this.resetTextColor();
+							ImGui.sameLine();
+							ImGui.pushItemWidth(55);
+							ImGui.inputFloat(" ", new ImFloat(this.selected_entity.myLight.getPosition().y));
+							ImGui.sameLine();this.setTextColor(0, 0, 10.3f, 3.0f);
+							ImGui.text("Z: ");
+							this.resetTextColor();
+							ImGui.sameLine();
+							ImGui.pushItemWidth(55);
+							ImGui.inputFloat(" ", new ImFloat(this.selected_entity.myLight.getPosition().z));
+							ImGui.treePop();
+							this.resetTextColor();
+						}
+						ImGui.text(" ");
+						// Scale
 						
-						ImGui.pushItemWidth(55);
-						ImGui.inputFloat(" ", new ImFloat(this.selected_light.getColour().x));
-						ImGui.sameLine();this.setTextColor(0, 1, 0, 1);
-						ImGui.text("g: ");
-						this.resetTextColor();
-						ImGui.sameLine();
-						ImGui.pushItemWidth(55);
-						ImGui.inputFloat(" ", new ImFloat(this.selected_light.getColour().y));
-						ImGui.sameLine();this.setTextColor(0, 0, 10.3f, 3.0f);
-						ImGui.text("b: ");
-						this.resetTextColor();
-						ImGui.sameLine();
-						ImGui.pushItemWidth(55);
-						ImGui.inputFloat(" ", new ImFloat(this.selected_light.getColour().z));
+						
+						ImGui.treePop();
+					}
+					
+					ImGui.text(" ");
+					ImGui.separator();
+					ImGui.text(" ");
+					this.selected_entity.myLight.setPosition(this.selected_entity.getPosition());
+					if (ImGui.treeNodeEx("Color", imgui.flag.ImGuiTreeNodeFlags.DefaultOpen)) {
+						ImGui.colorPicker3("Test", h);
+						this.selected_entity.myLight.setColour(new Vector3f(h[0], h[1], h[2]));
+						
 						ImGui.treePop();
 						this.resetTextColor();
 					}
+					
+					
 					
 					ImGui.treePop();
-				}
-				
-				ImGui.text(" ");
-				ImGui.separator();
-				ImGui.text(" ");
-
+	
 					
-				
-				
-				ImGui.treePop();
-
-				
-			}	
+				}	
+			}
+		}
 		}
 	}
 	
 	
 	
 	public void setSelectedEntity(Entity entity) {
-		this.selected_entity = entity;
-		this.selected_light = null;
-		this.selected_camera = null;
+		if (entity.type.startsWith("E") && entity.isRendered) {
+			this.selected_entity = entity;
+			this.selected_light = null;
+			this.selected_camera = null;
+			if (entity.myLight != null) {
+				h[0] = entity.myLight.getColour().x;
+				h[1] = entity.myLight.getColour().y;
+				h[2] = entity.myLight.getColour().z;
+			}
+		} else {
+			
+			Entity entityGIZMO = getEntity(entity.getID());
+			
+			if (entityGIZMO != null && entityGIZMO.type.startsWith("G")) {
+				this.updateGimzos();
+				entityGIZMO.isSelected = true;
+				this.current_gizmo = entityGIZMO;
+			}
+		}
+	}
+	
+	public void updateGimzos() {
+		if (this.current_gizmo != null) {
+			this.current_gizmo.isSelected = false;
+		}
 	}
 	
 	public void setSelectedLight(Light entity) {
@@ -261,25 +359,37 @@ public class ECS {
 		entity.setID(id_counter);
 		id_counter += 1;
 		this.entities.add(entity);
+		System.out.println(entities.get(id_counter - 1).type);
+	}
+	
+	
+	public void setEntity(int index, Entity entity) {
+		if (index > id_counter) {
+			id_counter = index;
+		}
+		
+		entities.add(index, entity);
 	}
 	
 	public void addLight(Light light) {
-		light.setID(id_counter);
-		id_counter += 1;
+		light.setID(id_light_counter);
+		id_light_counter++;
 		this.lights.add(light);
 	}
 	
 	public void addCamera(Camera camera) {
-		camera.setID(id_counter);
-		id_counter++;
+		camera.setID(id_camera_counter);
+		id_camera_counter++;
 		this.cameras.add(camera);
 	}
 	
 	public Entity getEntity(float id) {
 		try {
-			id -= 1;
+			//System.out.println(entities.get((int) id).name + "| ID:" + id );
 			return entities.get((int) id);
+			
 		} catch (Exception e) {
+			
 			return null;
 		}
 		
@@ -293,15 +403,26 @@ public class ECS {
 		return cameras.get(ID);
 	}
 	
-	public List getAllEntities() {
+	public List<Entity> getAllEntities() {
 		return this.entities;
 	}
 	
-	public List getAllLights() {
+	public void clearAllEntities() {
+		entities.clear();
+	}
+	
+	public void clearAllLights() {
+		lights.clear();
+	}
+	public void clearAllCamera() {
+		cameras.clear();
+	}
+	
+	public List<Light> getAllLights() {
 		return this.lights;
 	}
 	
-	public List getAllCameras() {
+	public List<Camera> getAllCameras() {
 		return this.cameras;
 	}
 	
@@ -314,10 +435,12 @@ public class ECS {
 		return null;
 	}
 	
-	public void initStyle() {
-		
-		
-		
+	public void setAllEntities(List<Entity> entities2, int id_counter2) {
+		this.entities = entities2;
+		this.id_counter = id_counter2;
+	}
+	
+	public void initStyle() {		
 		style.setColor(ImGuiCol.Text, 1.00f, 1.00f, 1.00f, 1.00f);
 		style.setColor(ImGuiCol.TextDisabled, 0.50f, 0.50f, 0.50f, 1.00f);
 		style.setColor(ImGuiCol.WindowBg, 0.0f, 0.17f, 0.26f, 0.07f);
@@ -374,12 +497,12 @@ public class ECS {
 	}
 	
 	
-	private void setTextColor(float r, float g, float b, float a) {
+	public void setTextColor(float r, float g, float b, float a) {
 		style.setColor(ImGuiCol.Text, r, g, b, a);
 
 	}
 	
-	private void resetTextColor() {
+	public void resetTextColor() {
 		style.setColor(ImGuiCol.Text, 1.00f, 1.00f, 1.00f, 1.00f);
 	}
 

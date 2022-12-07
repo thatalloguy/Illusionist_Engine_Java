@@ -3,21 +3,11 @@ package Editor;
 import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL30;
-import org.lwjgl.opengl.GL31;
 import org.lwjgl.opengl.GL32;
-import org.lwjgl.opengl.GL33;
-import org.lwjgl.opengl.GL40;
-import org.lwjgl.opengl.GL42;
 
 import renderEngine.DisplayManager;
-import toolbox.Utils;
 
 public class FrameBuffer {
 
@@ -76,14 +66,14 @@ public class FrameBuffer {
 
 	private void initialiseReflectionFrameBuffer() {
 		reflectionFrameBuffer = createFrameBuffer();
-		reflectionTexture = createTextureAttachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
+		reflectionTexture = createTextureAttachment(REFLECTION_WIDTH,REFLECTION_HEIGHT, GL11.GL_RED);
 		reflectionDepthBuffer = createDepthBufferAttachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
 		unbindCurrentFrameBuffer();
 	}
 	
 	private void initialiseRefractionFrameBuffer() {
 		refractionFrameBuffer = createFrameBuffer();
-		refractionTexture = createTextureAttachment(REFRACTION_WIDTH,REFRACTION_HEIGHT);
+		refractionTexture = createTextureAttachment(REFRACTION_WIDTH,REFRACTION_HEIGHT, GL11.GL_RGB);
 		refractionDepthTexture = createDepthTextureAttachment(REFRACTION_WIDTH,REFRACTION_HEIGHT);
 		unbindCurrentFrameBuffer();
 	}
@@ -104,10 +94,10 @@ public class FrameBuffer {
 		return frameBuffer;
 	}
 
-	private int createTextureAttachment( int width, int height) {
+	private int createTextureAttachment( int width, int height, int format) {
 		int texture = GL11.glGenTextures();
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
-		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, width, height,
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, format , width, height,
 				0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
@@ -143,9 +133,9 @@ public class FrameBuffer {
 		GL30.glReadBuffer(GL30.GL_COLOR_ATTACHMENT0);
 		
 		float pixels[] = new float[3];
-		GL30.glReadPixels(x, y, 1, 1, GL30.GL_RGB, GL30.GL_FLOAT, pixels);
+		GL30.glReadPixels(x, y, 1, 1, GL30.GL_RED, GL30.GL_FLOAT, pixels);
 		
-		return (float) Utils.round(pixels[0], 2);
+		return pixels[0];
 	}
 
 }

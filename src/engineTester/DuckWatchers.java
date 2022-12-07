@@ -7,14 +7,12 @@ import java.util.List;
 import java.util.Random;
 
 
-import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import entities.Camera;
+import entities.ECS;
 import entities.Entity;
 import entities.Light;
-import entities.Player;
 import fontMeshCreator.FontType;
 import fontMeshCreator.GUIText;
 import fontRendering.TextMaster;
@@ -27,10 +25,8 @@ import objConverter.OBJFileLoader;
 import particles.ParticleMaster;
 import particles.ParticleSystem;
 import particles.ParticleTexture;
-import particles.Particle;
 import renderEngine.DisplayManager;
 import renderEngine.Loader;
-import renderEngine.MasterRenderer;
 
 //import renderEngine.EntityRenderer;
 //import shaders.StaticShader;
@@ -38,10 +34,10 @@ import terrain.Terrain;
 import textures.ModelTexture;
 import textures.TerrainTexture;
 import textures.TerrainTexturePack;
-import toolbox.MousePicker;
 
 public class DuckWatchers {
 
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 
 		DisplayManager.createDisplay();
@@ -49,7 +45,7 @@ public class DuckWatchers {
 		TextMaster.init(loader);
 		ModelData playerModelData = OBJFileLoader.loadOBJ("person");
 		RawModel playerModel = loader.loadToVAO(playerModelData.getVertices(), playerModelData.getTextureCoords(), playerModelData.getNormals(), playerModelData.getIndices());
-		TexturedModel stanfordBunny = new TexturedModel(playerModel, new ModelTexture(loader.loadTexture("playerTexture")));
+		new TexturedModel(playerModel, new ModelTexture(loader.loadTexture("playerTexture")));
 		
 		/////////Player player = new Player(stanfordBunny, new Vector3f(100,0,-50),0,180,0, 0.6f, 0);
 		
@@ -61,7 +57,7 @@ public class DuckWatchers {
 		ModelData data = OBJFileLoader.loadOBJ("tree_pine");
 		RawModel model = loader.loadToVAO(data.getVertices(), data.getTextureCoords(), data.getNormals(), data.getIndices());
 		
-		TexturedModel staticModel = new TexturedModel(model,new ModelTexture(loader.loadTexture("treePineTexture")));
+		new TexturedModel(model,new ModelTexture(loader.loadTexture("treePineTexture")));
 		
 		ModelData grassData = OBJFileLoader.loadOBJ("grassModel");
 		RawModel grassModel = loader.loadToVAO(grassData.getVertices(), grassData.getTextureCoords(), grassData.getNormals(), grassData.getIndices());
@@ -69,7 +65,7 @@ public class DuckWatchers {
 		
 		ModelData lampData = OBJFileLoader.loadOBJ("lamp");
 		RawModel lampModel = loader.loadToVAO(lampData.getVertices(), lampData.getTextureCoords(), lampData.getNormals(), lampData.getIndices());
-		TexturedModel lamp = new TexturedModel(lampModel,new ModelTexture(loader.loadTexture("lamp")));
+		new TexturedModel(lampModel,new ModelTexture(loader.loadTexture("lamp")));
 		
 		grassTextureModel.getTexture().setHasTransparency(true);
 		grassTextureModel.getTexture().setUseFakeLighting(true);
@@ -97,7 +93,7 @@ public class DuckWatchers {
 		
 		TerrainTexture blendMap = new TerrainTexture(loader.loadTexture("blendMap"));
 		
-		Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "Lake_area");
+		new Terrain(0, -1, loader, texturePack, blendMap, "Lake_area");
 		
 		
 		
@@ -138,6 +134,7 @@ public class DuckWatchers {
 		
 		
 		List<Light> lights = new ArrayList<Light>();
+		ECS ecs = new ECS(null);
 		Light sun = new Light(new Vector3f(1000000,1000000,-100000),new Vector3f(1.4f,1.4f,1.4f));
 		lights.add(sun);
 		lights.add(new Light(new Vector3f(185,6.7f,-293),new Vector3f(2,0,0), new Vector3f(1, 0.1f, 0.002f)));
@@ -182,7 +179,7 @@ public class DuckWatchers {
 		
 		ModelData waterData = OBJFileLoader.loadOBJ("water");
 		RawModel waterModel = loader.loadToVAO(waterData.getVertices(), waterData.getTextureCoords(), waterData.getNormals(), waterData.getIndices());
-		TexturedModel waterTextureModel = new TexturedModel(waterModel,new ModelTexture(loader.loadTexture("waterTexture")));
+		new TexturedModel(waterModel,new ModelTexture(loader.loadTexture("waterTexture")));
 		
 		//Entity waterTile = new Entity(waterTextureModel, new Vector3f(347, terrain.getHeightOfTerrain(408, -497) - 10, -375), 0, 0, 0, 4f);
 		//entities.add(waterTile);

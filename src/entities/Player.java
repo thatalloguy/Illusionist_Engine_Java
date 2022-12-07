@@ -6,7 +6,6 @@ package entities;
 import org.lwjgl.util.vector.Vector3f;
 
 import models.TexturedModel;
-import physics.BoxCollider;
 import renderEngine.DisplayManager;
 import terrain.Terrain;
 
@@ -17,11 +16,13 @@ public class Player extends Entity{
 	public static final float GRAVITY = -50;
 	private static final float JUMP_POWER = 30;
 	
+	@SuppressWarnings("unused")
 	private static final float TERRAIN_HEIGHT = 0;
 	
 	private float currentXSpeed = 0;
 	private float currentZSpeed = 0;
 	private float currentTurnSpeed = 0;
+	@SuppressWarnings("unused")
 	private float upwardsSpeed = 0;
 	public Camera camera;
 	public boolean isInAir = false;
@@ -37,7 +38,6 @@ public class Player extends Entity{
 	
 	public void move(Terrain terrain) {
 		//checkInputs();
-		System.out.println(isSimulated);
 		
 		//super.increaseRotation(0, currentTurnSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 		//float distanceX = currentXSpeed * DisplayManager.getFrameTimeSeconds();
@@ -63,6 +63,7 @@ public class Player extends Entity{
 	}
 	
 	
+	@SuppressWarnings("unused")
 	private void jump() {
 		if (!isInAir) {
 			this.upwardsSpeed = JUMP_POWER;

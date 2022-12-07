@@ -6,9 +6,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import entities.Camera;
 import entities.Light;
-import toolbox.Maths;
 
 public class StaticShader extends ShaderProgram{
 	
@@ -31,6 +29,7 @@ public class StaticShader extends ShaderProgram{
 	private int location_ID;
 	private int location_usePicking;
 	private int location_max_lights = MAX_LIGHTS;
+	private int location_selected;
 	
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
@@ -54,6 +53,7 @@ public class StaticShader extends ShaderProgram{
 		location_useFakelighting = super.getUniformLocation("useFakeLighting");
 		location_ID = super.getUniformLocation("ID");
 		location_usePicking = super.getUniformLocation("usePicking");
+		location_selected = super.getUniformLocation("isSelected");
 //		location_numbersOfRows = super.getUniformLocation("numbersOfRows");
 //		location_offset = super.getUniformLocation("offset");
 		
@@ -78,6 +78,11 @@ public class StaticShader extends ShaderProgram{
 	
 	public void loadFakeLightingVariable(boolean  useFake) {
 		super.loadBoolean(location_useFakelighting, useFake);
+		
+	}
+	
+	public void loadSelectionVariable(boolean isSelected) {
+		super.loadBoolean(location_selected, isSelected);
 	}
 	
 	public void loadShineVariables(float damper,float reflectivity) {
@@ -104,8 +109,8 @@ public class StaticShader extends ShaderProgram{
 		super.loadMatrix(location_transformationMatrix, matrix);
 	}
 	
-	public void loadViewMatrix(Camera camera) {
-		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
+	public void loadViewMatrix(Matrix4f camera) {
+		Matrix4f viewMatrix = camera;
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 	
@@ -116,6 +121,14 @@ public class StaticShader extends ShaderProgram{
 	public void loadPicking(float ID, Boolean usePicking) {
 		super.loadFloat(location_ID, ID);
 		super.loadBoolean(location_usePicking, usePicking);
+	}
+
+	public int getLocation_max_lights() {
+		return location_max_lights;
+	}
+
+	public void setLocation_max_lights(int location_max_lights) {
+		this.location_max_lights = location_max_lights;
 	}
 	
 	

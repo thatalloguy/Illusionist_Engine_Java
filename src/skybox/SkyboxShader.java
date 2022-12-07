@@ -20,6 +20,7 @@ public class SkyboxShader extends ShaderProgram{
 	private int location_cubeMap;
 	private int location_cubeMap2;
 	private int location_blendFactor;
+	private int location_picking;
 	
 	private float rotation = 0;
 	
@@ -54,6 +55,10 @@ public class SkyboxShader extends ShaderProgram{
 		super.loadFloat(location_blendFactor, blend);
 	}
 	
+	public void loadPicking(boolean bool) {
+		super.loadBoolean(location_picking, bool);
+	}
+	
 	@Override
 	protected void getAllUniformLocations() {
 		location_projectionMatrix = super.getUniformLocation("projectionMatrix");
@@ -61,6 +66,7 @@ public class SkyboxShader extends ShaderProgram{
 		location_cubeMap = super.getUniformLocation("cubeMap");
 		location_cubeMap2 = super.getUniformLocation("cubeMap2");
 		location_blendFactor = super.getUniformLocation("blendFactor");
+		location_picking = super.getUniformLocation("isPicking");
 	}
 
 	@Override

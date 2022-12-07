@@ -80,6 +80,11 @@ public class Mouse {
 		return new Vector2f(relx, rely);
 	}
 	
+	public void resetRel() {
+		relx = 0;
+		rely = 0;
+	}
+	
 	public String getHorDirection() {
 		System.out.println(MousePos.x);
 		if (MousePos.x > oldMousePos.x) {

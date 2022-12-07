@@ -8,7 +8,7 @@ public class StateManager {
 	private String TagState;
 	
 	private Boolean isIdle;
-	
+
 	public StateManager() {}
 
 	public String getMainState() {

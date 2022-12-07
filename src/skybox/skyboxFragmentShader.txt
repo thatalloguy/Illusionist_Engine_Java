@@ -6,7 +6,7 @@ out vec4 out_Color;
 uniform samplerCube cubeMap;
 uniform samplerCube cubeMap2;
 uniform float blendFactor;
-
+uniform bool isPicking;
 
 
 void main(void){
@@ -15,6 +15,10 @@ void main(void){
 	vec4 finalColour = mix(texture1, texture2, blendFactor);
 	
 	
-
-    out_Color = finalColour;//texture(finalColour, textureCoords);
+	if (isPicking) {
+		out_Color = vec4(0, 0, 0, 1);
+		out_Color.rgb = vec3(1, 0, 0);
+	} else {
+    	out_Color = finalColour;//texture(finalColour, textureCoords);
+	}
 }

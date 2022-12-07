@@ -2,6 +2,13 @@ package entities;
 
 import org.lwjgl.util.vector.Vector3f;
 
+import models.RawModel;
+import models.TexturedModel;
+import objConverter.ModelData;
+import objConverter.OBJFileLoader;
+import renderEngine.Loader;
+import textures.ModelTexture;
+
 public class Light {
 
 	private Vector3f position;
@@ -10,10 +17,22 @@ public class Light {
 	
 	public String name = "Light";
 	private int ID = 0;
-	
+	public Entity visualEntity2;
+	@SuppressWarnings("unused")
+	private ECS ecs;
 	public Light(Vector3f position, Vector3f colour) {
 		this.position = position;
 		this.colour = colour;
+		
+		Loader loader = new Loader();
+		ModelData newData = OBJFileLoader.loadOBJ("res/camera.obj");
+		RawModel newModel = loader.loadToVAO(newData.getVertices(), newData.getTextureCoords(), newData.getNormals(), newData.getIndices());
+		TexturedModel newtexmod = new TexturedModel(newModel,new ModelTexture(loader.loadTexture("res/light.png")));
+		this.visualEntity2 = new Entity(newtexmod, position , 0, 0, 0, new Vector3f(2, 2, 0), 0);
+		this.visualEntity2.uselighting = true;
+		this.visualEntity2.name = "Light";
+		this.visualEntity2.myLight = this;
+		
 	}
 
 	public Light(Vector3f position, Vector3f colour, Vector3f attenuation) {

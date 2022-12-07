@@ -13,15 +13,20 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class OBJFileLoader {
 	
-	private static final String RES_LOC = "res/";
-
+	private static final String RES_LOC = "";
+	public static String path;
+	
+	
 	public static ModelData loadOBJ(String objFileName) {
 		FileReader isr = null;
-		File objFile = new File(RES_LOC + objFileName + ".obj");
+		path = objFileName;
+		File objFile = new File(RES_LOC + objFileName + "");
 		try {
 			isr = new FileReader(objFile);
 		} catch (FileNotFoundException e) {
-			System.err.println("File not found in res; don't use any extention");
+			System.out.println("File not found in res; don't use any extention");
+			System.out.println(RES_LOC + objFileName + " | " + path);
+			System.out.println(e);
 		}
 		BufferedReader reader = new BufferedReader(isr);
 		String line;

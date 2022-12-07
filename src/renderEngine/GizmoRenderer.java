@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
-import entities.Camera;
 import entities.Entity;
 import models.RawModel;
 import models.TexturedModel;
@@ -18,7 +17,7 @@ import shaders.StaticShader;
 import textures.ModelTexture;
 import toolbox.Maths;
 
-public class EntityRenderer {
+public class GizmoRenderer {
 
 	
 	
@@ -26,7 +25,7 @@ public class EntityRenderer {
 
 	private StaticShader shader;
 	
-	public EntityRenderer(StaticShader shader, Matrix4f projectionMatrix) {
+	public GizmoRenderer(StaticShader shader, Matrix4f projectionMatrix) {
 		this.shader = shader;
 
 
@@ -36,7 +35,7 @@ public class EntityRenderer {
 	}
 	
 	
-	public void render(Map<TexturedModel,List<Entity>> entities, Camera camera) {
+	public void render(Map<TexturedModel,List<Entity>> entities) {
 		for (TexturedModel model:entities.keySet()) {
 			
 			prepareTexturedModel(model);
@@ -46,8 +45,8 @@ public class EntityRenderer {
 				
 				if(entity.isRendered) {
 					entity.Update();
-					prepareInstance(entity, camera);
-
+					prepareInstance(entity);
+					
 					if (!entity.getDebug()) {
 						GL11.glDrawElements(GL11.GL_TRIANGLES, model.getRawModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
 					} else {
@@ -88,17 +87,16 @@ public class EntityRenderer {
 		GL30.glBindVertexArray(0);
 	}
 	
-	private void prepareInstance(Entity entity, Camera camera) {
+	private void prepareInstance(Entity entity) {
 		Matrix4f transformationMatrix = Maths.createTransformationMatrix(entity.getPosition(), 
 				entity.getRotX(), entity.getRotY(), entity.getRotZ(), entity.getScale());
-		if (entity.isFacingCamera) {
-			transformationMatrix = Matrix4f.mul(transformationMatrix, camera.getViewMatrix(), null);
-		}
+		
 		shader.loadTransformationMatrix(transformationMatrix);
 		shader.loadOffset(entity.getTextureXOffset(), entity.getTextureYOffset());
 		shader.loadFakeLightingVariable(entity.uselighting);
 		shader.loadSelectionVariable(entity.isSelected);
-		shader.loadPicking(entity.getID(), entity.isPicking);
+		float yes = entity.getID();
+		shader.loadPicking(yes, entity.isPicking);
 		
 	}
 	
@@ -110,3 +108,4 @@ public class EntityRenderer {
 	
 	
 }
+

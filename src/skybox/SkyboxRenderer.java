@@ -59,7 +59,7 @@ public class SkyboxRenderer {
 	     SIZE, -SIZE,  SIZE
 	};
 
-	private static String[] TEXTURE_FILES = {"right", "left", "top", "bottom", "back", "front"};
+	private static String[] TEXTURE_FILES = {"right", "left", "top", "bottom", "front", "back"};
 	private static String[] NIGHT_TEXTURE_FILES = {"nightRight", "nightLeft", "nightTop", "nightBottom", "nightBack", "nightFront"};
 	
 	private Boolean isDay = true;
@@ -67,6 +67,7 @@ public class SkyboxRenderer {
 	public Boolean doCycle = false;
 	public Boolean doSpining = false;
 	private RawModel cube;
+	public Boolean isPicking = false;
 	private int texture;
 	private int nightTexture;
 	private SkyboxShader shader;
@@ -87,6 +88,7 @@ public class SkyboxRenderer {
 		shader.doSpin = this.doSpining;
 		shader.start();
 		shader.loadViewMatrix(camera);
+		shader.loadPicking(this.isPicking);
 		GL30.glBindVertexArray(cube.getVaoID());
 		GL20.glEnableVertexAttribArray(0);
 		bindTextures();

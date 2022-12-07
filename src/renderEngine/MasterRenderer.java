@@ -9,7 +9,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.util.vector.Matrix4f;
 
-import Gizmo.Gizmo;
 import entities.Camera;
 import entities.Entity;
 import entities.Light;
@@ -23,10 +22,11 @@ import terrain.Terrain;
 public class MasterRenderer {
 
 	private StaticShader shader = new StaticShader();
-	
+	private StaticShader gizmoShader = new StaticShader();
 	private Matrix4f projectionMatrix;
 	
 	private EntityRenderer renderer;
+	private GizmoRenderer gizmoRenderer;
 	
 
 	private TerrainRenderer terrainRenderer;
@@ -38,8 +38,8 @@ public class MasterRenderer {
 	public static final float FAR_PLANE = 1000;
 	
 	private Map<TexturedModel, List<Entity>> entities = new HashMap<TexturedModel,List<Entity>>();
+	private Map<TexturedModel, List<Entity>> gizmos = new HashMap<TexturedModel,List<Entity>>();
 	private List<Terrain> terrains = new ArrayList<Terrain>();
-	private List<Gizmo> gizmos = new ArrayList<Gizmo>();
 	
 	public SkyboxRenderer skyboxRenderer;
 	private ShadowMapMasterRenderer shadowMapRenderer;
@@ -48,6 +48,7 @@ public class MasterRenderer {
 		enableCulling();
 		createProjectionMatrix();
 		renderer = new EntityRenderer(shader,projectionMatrix);
+		gizmoRenderer = new GizmoRenderer(gizmoShader, projectionMatrix);
 		terrainRenderer = new TerrainRenderer(terrainShader,projectionMatrix);
 		skyboxRenderer = new SkyboxRenderer(loader, projectionMatrix);
 		this.shadowMapRenderer = new ShadowMapMasterRenderer(cam);
@@ -69,26 +70,43 @@ public class MasterRenderer {
 	
 	public void render(List<Light> lights, Camera camera) {
 		prepare();
+		GL11.glDepthRange(0.01, 1.0);
 		shader.start();
 		shader.loadLights(lights);
-		shader.loadViewMatrix(camera);
+		shader.loadViewMatrix(camera.getViewMatrix());
 		
 		
-		renderer.render(entities);
+		renderer.render(entities, camera);
 		
 		shader.stop();
+		
+		
 		terrainShader.start();
 		terrainShader.loadLights(lights);
 		terrainShader.loadViewMatrix(camera);
 		terrainRenderer.render(terrains, shadowMapRenderer.getToShadowMapSpaceMatrix());
 		terrainShader.stop();
 		
-
+		GL11.glDepthRange(0, 0.01);
+		
+		gizmoShader.start();
+		gizmoShader.loadLights(lights);
+		gizmoShader.loadViewMatrix(camera.getViewMatrix());
+		
+		
+		gizmoRenderer.render(gizmos);
+		
+		gizmoShader.stop();
+		
+		GL11.glDepthRange(0, 1.0);
+		
+		
 		if (this.renderSkyBox) {
 			skyboxRenderer.render(camera);
 		}
 		terrains.clear();
 		entities.clear();
+		gizmos.clear();
 		
 	}
 	
@@ -109,9 +127,19 @@ public class MasterRenderer {
 		}
 		
 	}
-	
-	public void addGizmo(Gizmo gizmo) {
-		gizmos.add(gizmo);
+
+	public void processGizmo(Entity entity) {
+		TexturedModel entityModel = entity.getModel();
+		List<Entity> batch = gizmos.get(entityModel);
+		
+		if(batch!=null) {
+			batch.add(entity); 
+		}else {
+			List<Entity> newBatch = new ArrayList<Entity>();
+			newBatch.add(entity);
+			gizmos.put(entityModel, newBatch);
+		}
+		
 	}
 	
 	public void renderShadowMap(List<Entity> entitylist, Light sun) {

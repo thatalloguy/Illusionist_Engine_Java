@@ -250,6 +250,11 @@ public class KeyBoard {
 				return true;
 			}
 		} 
+		if (key == "f5") {
+			if (GLFW.glfwGetKey(DisplayManager.getRawWindow(), GLFW.GLFW_KEY_F5) == GLFW.GLFW_PRESS) {
+				return true;
+			}
+		}
 		
 		return false;
 	}
